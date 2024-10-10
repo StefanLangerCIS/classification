@@ -1,0 +1,1 @@
+grep "m.cro avg" results_*.txt | sed 's/.txt:.*m/\tm/'

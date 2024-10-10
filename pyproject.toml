@@ -1,0 +1,31 @@
+[tool.poetry]
+name = ""
+version = "0.1.0"
+description = "Some scripts for classification, clustering and search"
+authors = ["Stefan Langer <langer.stefan@lmu.de>"]
+readme = "README.md"
+
+
+[tool.poetry.dependencies]
+python = "~3.12"
+scikit-learn = "^1.5.2"
+pandas = "^2.2.3"
+jupyter = "^1.1.1"
+langdetect = "^1.0.9"
+seaborn = "^0.13.2"
+transformers = "^4.45.2"
+datasets = "^3.0.1"
+pydantic = "^2.9.2"
+sentence-transformers = "^3.1.1"
+
+[tool.poetry.scripts]
+
+[tool.poetry.group.dev.dependencies]
+black = "^24.10.0"
+isort = "^5.13.2"
+pytest = "^8.3.3"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
