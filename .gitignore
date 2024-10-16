@@ -1,4 +1,5 @@
-.idea
+.idea/
+.venv/
 __pycache__
 .ipynb_checkpoints
 classification/data
