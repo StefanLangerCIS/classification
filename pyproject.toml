@@ -13,7 +13,7 @@ pandas = "^2.2.3"
 jupyter = "^1.1.1"
 langdetect = "^1.0.9"
 seaborn = "^0.13.2"
-transformers = "^4.45.2"
+transformers = {extras = ["torch"], version = "^4.45.2"}
 datasets = "^3.0.1"
 pydantic = "^2.9.2"
 sentence-transformers = "^3.1.1"
