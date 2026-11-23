@@ -16,6 +16,7 @@ dependencies = [
     "datasets (>=5.2.0,<6.0.0)",
     "pydantic (>=2.14.3,<3.0.0)",
     "sentence-transformers (>=6.1.0,<7.0.0)",
+    "accelerate (>=1.1.0,<2.0.0)",
     "matplotlib (>=3.11.2,<4.0.0)",
     "jupyter (>=1.1.1,<2.0.0)",
 ]

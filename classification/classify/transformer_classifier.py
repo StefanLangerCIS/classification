@@ -66,7 +66,7 @@ class TransformerClassifier(TextClassifier):
         """
         self.model_name = model_name
         self.tokenizer = AutoTokenizer.from_pretrained(self.model_name)
-        self.model = AutoModelForSequenceClassification.from_pretrained(self.model_name, num_labels=6)
+        self.model = None
 
         self.classifier_type = "transformer"
         self.classifier_name = self.classifier_type + "_" + self.model_name
@@ -96,15 +96,21 @@ class TransformerClassifier(TextClassifier):
         :return: Nothing
         """
         ds = Dataset.from_list(training_data)
+        label_names = sorted(set(ds["label"]))
+        label2id = {name: i for i, name in enumerate(label_names)}
+        ds = ds.map(lambda x: {"label": label2id[x["label"]]})
+        self.model = AutoModelForSequenceClassification.from_pretrained(
+            self.model_name, num_labels=len(label_names)
+        )
         ds_split = ds.train_test_split(test_size=0.2)
         training_dataset = ds_split['train']
         validation_dataset = ds_split['test']
         if len(validation_dataset) < 3:
             app_logger.error("Data set too small")
-        # training_dataset = training_dataset.map(self._tokenize, batched=True)
-        # validation_dataset = validation_dataset.map(self._tokenize, batched=True)
-        # training_dataset.set_format(type='torch', columns=['input_ids', 'attention_mask', 'label'])
-        # validation_dataset.set_format(type='torch', columns=['input_ids', 'attention_mask', 'label'])
+        training_dataset = training_dataset.map(self._tokenize, batched=True)
+        validation_dataset = validation_dataset.map(self._tokenize, batched=True)
+        training_dataset.set_format(type='torch', columns=['input_ids', 'attention_mask', 'label'])
+        validation_dataset.set_format(type='torch', columns=['input_ids', 'attention_mask', 'label'])
 
         training_args = TrainingArguments(
             output_dir=TMP_DATA_DIR,
@@ -113,7 +119,7 @@ class TransformerClassifier(TextClassifier):
             per_device_eval_batch_size=16,
             num_train_epochs=3,
             weight_decay=0.01,
-            evaluation_strategy="epoch",
+            eval_strategy="epoch",
             save_strategy="epoch"
         )
 
@@ -123,7 +129,7 @@ class TransformerClassifier(TextClassifier):
             args=training_args,
             train_dataset=training_dataset,
             eval_dataset=validation_dataset,
-            tokenizer=self.tokenizer
+            processing_class=self.tokenizer
         )
 
         trainer.train()

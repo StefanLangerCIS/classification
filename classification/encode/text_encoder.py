@@ -123,12 +123,7 @@ class TextEncoderDense(TextEncoder):
     """
     def __init__(self):
         self.sentence_transformer = None
-        # Model selected for good speed and ok-ish performance
-        # see https://www.sbert.net/docs/pretrained_models.html
-        # Multilingual
-        # Multilingual: "paraphrase-multilingual-MiniLM-L12-v2"
-        # Monolingual: "all-MiniLM-L12-v2"
-        self.model = "paraphrase-multilingual-MiniLM-L12-v2"
+        self.model = "microsoft/harrier-oss-v1-270m"
 
     def name(self) -> str:
         return f"dense_{self.model}"
