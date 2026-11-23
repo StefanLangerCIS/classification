@@ -19,7 +19,16 @@ _this_dir = os.path.abspath(os.path.dirname(__file__))
 _default_data_dir = os.path.abspath(os.path.join(_this_dir, "../../../", "data", "news", "clustering"))
 DATA_DIR = os.getenv("CLS_SRCH_DATA_DIR", _default_data_dir)
 
-def calculate_correlation(data: List[Dict], label1: str, label2: str, data_name=""):
+def calculate_correlation(data: List[Dict], label1: str, label2: str, data_name: str = "") -> str:
+    """
+    Calculate and display chi-square correlation between two nominal variables.
+
+    :param data: List of data records as dictionaries.
+    :param label1: Name of the first nominal variable.
+    :param label2: Name of the second nominal variable.
+    :param data_name: Descriptive name used in the plot title.
+    :return: Empty string (placeholder for future result text).
+    """
     df = pd.DataFrame(data)
     print(df)
 
@@ -41,7 +50,8 @@ def calculate_correlation(data: List[Dict], label1: str, label2: str, data_name=
     plt.show()
     return ""
 
-def main():
+def main() -> None:
+    """Parse CLI arguments and run chi-square correlation analysis on cluster result files."""
     parser = argparse.ArgumentParser(
         description="Calculate correlation between nominal features"
     )

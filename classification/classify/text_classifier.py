@@ -10,7 +10,7 @@ class ClassifierResult:
     Generic class for holding a classifier result
     """
 
-    def __init__(self, class_name: str, class_score=-1, meta_information=""):
+    def __init__(self, class_name: str, class_score: float = -1, meta_information: str = ""):
         """
         :param class_name: can be any string
         :param class_score: any number. Optimally normalized to value between 0...1
@@ -20,7 +20,7 @@ class ClassifierResult:
         self.class_score = class_score
         self.meta_information = meta_information
 
-    def __repr__(self):
+    def __repr__(self) -> str:
         return f"{self.__class__} object. class_name: {self.class_name}, class_description: {self.class_score}, meta_information: {self.meta_information}"
 
 
@@ -55,14 +55,11 @@ class TextClassifier(ABC):
         return
 
     @abc.abstractmethod
-    def classify(self, data) -> List[ClassifierResult]:
+    def classify(self, data: dict) -> List[ClassifierResult]:
         """
         Classify a given text
         :param data: dictionary (parsed json) - the record to classify, needs field 'text'
         :return: List of predicted classes (for most classifier, just one class)
-        """
-        """
-        Return an ordered list of ClassifierResults
         """
         return []
 
@@ -71,7 +68,13 @@ def get_data_records_from_file(
     training_file: str, text_label: List[str], class_label: str, mx: int = 0
 ) -> List[Dict]:
     """
-    Retrieve the data records from file (for training)
+    Retrieve the data records from file (for training).
+
+    :param training_file: Path to a JSONL file containing the data records.
+    :param text_label: List of field names whose values are concatenated as the text.
+    :param class_label: Field name that holds the class label.
+    :param mx: Maximum number of records to return (0 for all).
+    :return: List of dictionaries with 'text' and 'label' keys.
     """
     with open(training_file, encoding="utf-8") as training_fp:
         data_records = []

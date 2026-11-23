@@ -48,7 +48,8 @@ def filter_match(record: dict, filters: dict) -> bool:
     return True
 
 
-def main():
+def main() -> None:
+    """Parse CLI arguments and run one or all clustering algorithms."""
     parser = argparse.ArgumentParser(
         description="Evaluate one or several text classifiers"
     )

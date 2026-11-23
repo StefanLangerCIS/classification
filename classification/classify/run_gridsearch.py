@@ -7,7 +7,8 @@ import os
 from sklearn_gridsearch import SklearnGridSearch
 
 
-def main():
+def main() -> None:
+    """Parse CLI arguments and run grid search for one or all supported classifiers."""
     parser = argparse.ArgumentParser(
         description="Evaluate one or several text classifiers"
     )

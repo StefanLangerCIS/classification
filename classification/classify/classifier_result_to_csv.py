@@ -8,7 +8,8 @@ from classification.classify.run_classifier import ClassificationResultData
 from classification.env.env import CLASSIFIER_OUTPUT_DIR
 
 
-def main():
+def main() -> None:
+    """Read classification result JSON files and write a summary CSV sorted by accuracy."""
     parser = argparse.ArgumentParser(
         description="Evaluate one or several text classifiers"
     )

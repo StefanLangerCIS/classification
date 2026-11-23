@@ -42,11 +42,13 @@ class SklearnClassifier(TextClassifier):
             self,
             classifier_type: str,
             classifier_preprocessor: TextEncoder,
-            model_folder_path: str = None
+            model_folder_path: str | None = None
     ):
         """
-        Initialize the classifier
-        :param classifier_type: The name of the classifiers
+        Initialize the classifier.
+
+        :param classifier_type: The name of the classifier algorithm.
+        :param classifier_preprocessor: The text encoder used for feature extraction.
         :param model_folder_path: The folder where to store models.
         """
         if model_folder_path:
@@ -136,10 +138,9 @@ class SklearnClassifier(TextClassifier):
         # else:
         #    pass
 
-    def _print_decision_tree(self):
+    def _print_decision_tree(self) -> None:
         """
-        Print decision tree rules
-        :return:
+        Export decision tree rules to a text file, replacing feature indices with vocabulary words.
         """
         rules_text = export_text(self.sklearn_classifier, max_depth=100)
         # Vocabulary for replacement in the data which contains

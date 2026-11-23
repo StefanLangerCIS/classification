@@ -13,8 +13,12 @@ if not app_logger.hasHandlers():
     app_logger.addHandler(stdout_handler)
 
 
-def add_file_logger(logging_path: str):
-    # Check whether stdout handler was already added
+def add_file_logger(logging_path: str) -> None:
+    """
+    Add a file handler to the application logger.
+
+    :param logging_path: Path to the log file.
+    """
     app_logger.setLevel(logging.DEBUG)
     handler = logging.FileHandler(logging_path, encoding="utf-8", mode="a")
     formatter = logging.Formatter("%(asctime)-16s %(levelname)-10s %(message)s")

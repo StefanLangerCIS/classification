@@ -31,11 +31,13 @@ class SklearnGridSearch:
         },
     }
 
-    def __init__(self, classifier_type: str, parameters: Dict, verbose=False):
+    def __init__(self, classifier_type: str, parameters: Dict, verbose: bool = False):
         """
-        Initialize the classifier
-        :param classifier_type: The name of the classifiers
-        :param verbose: verbosity true or false
+        Initialize the grid search.
+
+        :param classifier_type: The name of the classifier algorithm.
+        :param parameters: The parameter grid to search over.
+        :param verbose: Enable verbose output.
         """
         self.verbose = verbose
 
@@ -61,14 +63,12 @@ class SklearnGridSearch:
         self, training_data: str, text_label: str, class_label: str
     ) -> Dict:
         """
-        Train the classifier
-        :param training_data: File name. Training data is one json per line
-        :param text_label: Json field which contains the text
-        :param class_label:  Json field which contains the label for the classes to train
-        :return: Nothing
-        """
-        """
-        Train the algorithm with the data from the knowledge graph
+        Run grid search to find the best hyperparameters.
+
+        :param training_data: File name. Training data is one json per line.
+        :param text_label: JSON field which contains the text.
+        :param class_label: JSON field which contains the class label.
+        :return: The best parameters found by grid search.
         """
 
         data_train = get_data_records_from_file(

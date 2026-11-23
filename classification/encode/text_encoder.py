@@ -32,7 +32,12 @@ class TextEncoderSparse(TextEncoder):
     """
     Preprocessing of the data - transform text into numerical features.
     """
-    def __init__(self, lsa=False):
+    def __init__(self, lsa: bool = False):
+        """
+        Initialize the sparse text encoder.
+
+        :param lsa: If True, apply Latent Semantic Analysis for dimensionality reduction.
+        """
         self.lsa = lsa
         # Features for sparse and LSA variants
         # The minimum number of document a word has to occur in to be considered
@@ -108,6 +113,12 @@ class TextEncoderSparse(TextEncoder):
         return None
 
     def _create_tfidf_matrix(self, data_to_transform: pd.DataFrame) -> numpy.ndarray:
+        """
+        Transform data into a TF-IDF matrix, optionally reduced with LSA.
+
+        :param data_to_transform: Data frame containing text in column 'text'.
+        :return: The TF-IDF (or LSA-reduced) matrix.
+        """
         matrix_counts = self.count_vectorizer.transform(data_to_transform.text)
         matrix = self.tfidf_transformer.transform(matrix_counts)
         if self.lsa:
@@ -121,9 +132,10 @@ class TextEncoderDense(TextEncoder):
     """
     Preprocessing of the data - transform text into numerical features - embedding.
     """
-    def __init__(self):
-        self.sentence_transformer = None
-        self.model = "microsoft/harrier-oss-v1-270m"
+    def __init__(self) -> None:
+        """Initialize the dense text encoder with the sentence transformer model."""
+        self.sentence_transformer: TextEmbedder | None = None
+        self.model: str = "microsoft/harrier-oss-v1-270m"
 
     def name(self) -> str:
         return f"dense_{self.model}"
@@ -142,7 +154,7 @@ class TextEncoderDense(TextEncoder):
         :param data: The data to create the dense matrix from
         :param train: In the dense preprocessor, this parameter is ignored.
         :return: The dense matrix.
-        """ ""
+        """
         if self.sentence_transformer is None:
             self.sentence_transformer = TextEmbedder(
                 self.model, cache_file=None

@@ -28,13 +28,13 @@ class SklearnClustering(TextClustering):
         "OPTICS",
     ]
 
-    def __init__(self, algorithm: str, n_clusters: int = 5, verbose=False):
+    def __init__(self, algorithm: str, n_clusters: int = 5, verbose: bool = False):
         """
-        Initialize the classifier
-        :param algorithm: The name of the clustering algorithm
-        :param n_c
-        lusters: Number of clusters. Ignored for density based algorithms
-        :param verbose: Print more...
+        Initialize the clustering algorithm.
+
+        :param algorithm: The name of the clustering algorithm.
+        :param n_clusters: Number of clusters. Ignored for density-based algorithms.
+        :param verbose: Enable verbose output.
         """
         # Store the file path of the training data
         self.data = None
@@ -65,13 +65,11 @@ class SklearnClustering(TextClustering):
 
     def cluster(self, data_records: List[dict], text_labels: List[str]) -> List[Cluster]:
         """
-        Cluster
-        :param data_records: List of dicts (data records)
-        :param text_labels: Json fields which contain the text
-        :return: The list of created clusters
-        """
-        """
-        Train the algorithm with the data from the knowledge graph
+        Cluster the data records using TF-IDF features.
+
+        :param data_records: List of dicts (data records).
+        :param text_labels: JSON fields which contain the text.
+        :return: The list of created clusters.
         """
         self.text_labels = text_labels
         self.data_table = self._create_data_table(data_records, text_labels)
@@ -93,9 +91,11 @@ class SklearnClustering(TextClustering):
         self, data_records: List[dict], text_labels: List[str]
     ) -> pandas.DataFrame:
         """
-        :param data_records: the records to create the data table for
-        :param text_labels: The labels of the fields which contains the text
-        :return: The data frame
+        Build a data frame from raw data records with concatenated text fields.
+
+        :param data_records: The records to create the data table for.
+        :param text_labels: The labels of the fields which contain the text.
+        :return: The data frame with 'text' and 'id' columns.
         """
         self.data_records = {}
         data_points = []
@@ -128,9 +128,9 @@ class SklearnClustering(TextClustering):
     # ********************************
     def _build_result(self) -> List[Cluster]:
         """
-        Create the result objects (cluster list)
-        :param data_table: The data table which was clustered
-        :return: A list of clusters
+        Create the result objects (cluster list).
+
+        :return: A list of clusters with assigned data points and descriptions.
         """
         clusters = {}
         cluster_centers = self._compute_cluster_centers()
@@ -151,10 +151,9 @@ class SklearnClustering(TextClustering):
 
     def _create_cluster_terms_count(self, cluster: Cluster) -> None:
         """
-        Get the significant terms for the cluster and add to description
-        using the count of terms
-        :param cluster: The cluster to add the description to
-        :return:
+        Get the significant terms for the cluster and add to description using term counts.
+
+        :param cluster: The cluster to add the description to.
         """
         top_terms = Counter()
         for record in cluster.data_points:
@@ -170,10 +169,9 @@ class SklearnClustering(TextClustering):
 
     def _create_cluster_terms_centroid(self, cluster: Cluster) -> None:
         """
-        Get the significant terms for the cluster and add to description
-        using the cluster centers
-        :param cluster: The cluster to add the diescription to
-        :return:
+        Get the significant terms for the cluster and add to description using cluster centroids.
+
+        :param cluster: The cluster to add the description to.
         """
         feature_names = self.count_vectorizer.get_feature_names_out()
         terms_with_tfidf = []
@@ -185,12 +183,11 @@ class SklearnClustering(TextClustering):
         terms_with_tfidf.sort(key=lambda x: x[1], reverse=True)
         cluster.cluster_decription = str(terms_with_tfidf[0:10])
 
-    def _compute_cluster_centers(self):
+    def _compute_cluster_centers(self) -> np.ndarray:
         """
-        Computer the cluster center
-        :param labels: The labels and the clustered data
-        :param data_table: The data table to use
-        :return: The cluster centers
+        Compute the cluster centers.
+
+        :return: Array of cluster center vectors.
         """
 
         if self.algorithm == "KMeans":

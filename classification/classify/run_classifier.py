@@ -95,7 +95,12 @@ def plot_and_store_confusion_matrix(
 
 
 def count_lines(file: str) -> int:
-    # Determine the number of training lines (for the record)
+    """
+    Count the number of lines in a file.
+
+    :param file: Path to the file.
+    :return: The number of lines.
+    """
     n_lines = 0
     if file is not None:
         with open(file, encoding="utf-8") as f:
@@ -121,7 +126,13 @@ class ClassificationResultData(BaseModel):
     classification_report_table: str
 
 
-def classification_result_to_text(report: ClassificationResultData, file_path) -> None:
+def classification_result_to_text(report: ClassificationResultData, file_path: str) -> None:
+    """
+    Write a classification result to a human-readable text file.
+
+    :param report: The classification result data.
+    :param file_path: Path to the output text file.
+    """
     app_logger.info(f"Writing results of classifier {report.classifier_name} to {file_path}")
     with open(file_path, "w", encoding="utf-8") as f:
         f.write("#Info:\n")
@@ -150,7 +161,13 @@ def classification_result_to_text(report: ClassificationResultData, file_path) -
         f.write(f"\n#Classification report:\n{report.classification_report_table}\n")
 
 
-def classification_result_to_json(report: ClassificationResultData, file_path) -> None:
+def classification_result_to_json(report: ClassificationResultData, file_path: str) -> None:
+    """
+    Write a classification result to a JSON file.
+
+    :param report: The classification result data.
+    :param file_path: Path to the output JSON file.
+    """
     result_dict = {**report.model_dump()}
     with open(file_path, "w", encoding="utf-8") as f:
         json.dump(result_dict, f, ensure_ascii=False, indent=2)
@@ -189,6 +206,7 @@ def run_classifier(
     :param class_label: The class label in the training data
     :param text_labels: The keys in the json which point to the text
     :param dense: Use dense vectors (embeddings)
+    :param lsa: Use latent semantic analysis for dimensionality reduction.
     :param output_folder: Output folder for classification report
     :param max_train: Maximum number of lines to use for training
     :param verbose: Verbose output
@@ -252,6 +270,13 @@ def run_classifier(
     classification_report = sklearn.metrics.classification_report(expected_classes,
                                                                   predicted_classes,
                                                                   output_dict=True)
+    for key, value in classification_report.items():
+        if isinstance(value, float):
+            classification_report[key] = round(value, 3)
+        elif isinstance(value, dict):
+            for k, v in value.items():
+                if isinstance(v, float):
+                    value[k] = round(v, 3)
     classification_result = ClassificationResultData(
         classifier_name=classifier.name(),
         classifier_info=classifier.info(),
@@ -283,7 +308,8 @@ def run_classifier(
     return classification_result
 
 
-def main():
+def main() -> None:
+    """Parse CLI arguments and run one or all sklearn classifiers."""
     parser = argparse.ArgumentParser(
         description="Evaluate one or several text classifiers"
     )

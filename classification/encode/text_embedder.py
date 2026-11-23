@@ -35,8 +35,8 @@ class TextEmbedder:
         self.model = model
         self.sentence_transformer = SentenceTransformer(model)
 
-    def _load_cache(self):
-        # Create cache file if it does not exist
+    def _load_cache(self) -> None:
+        """Load cached embeddings from the JSONL cache file."""
         if not os.path.exists(self.cache_file):
             open(self.cache_file, "w").close()
         with open(self.cache_file, "r") as cache_data:
@@ -47,7 +47,8 @@ class TextEmbedder:
                 embedding = numpy.array(record["embedding"], dtype=float)
                 self.cache[(md5, model)] = embedding
 
-    def _safe_cache(self):
+    def _save_cache(self) -> None:
+        """Append newly computed embeddings to the cache file."""
         with open(self.cache_file, "a") as cache_file:
             for md5, model, embedding in self.cache_new:
                 record = {
@@ -60,7 +61,13 @@ class TextEmbedder:
                 cache_file.write(json_dump + "\n")
             self.cache_new = []
 
-    def encode(self, texts) -> numpy.ndarray:
+    def encode(self, texts: list[str]) -> numpy.ndarray:
+        """
+        Encode a list of texts into embedding vectors, using cache where available.
+
+        :param texts: List of text strings to encode.
+        :return: Array of shape (len(texts), embedding_dim).
+        """
         embeddings = []
         for text in texts:
             md5 = hashlib.md5(text.encode("utf-8")).hexdigest()
@@ -75,11 +82,11 @@ class TextEmbedder:
                     print(
                         f"INFO: Embedding calculation - next batch of {batch_size} embeddings of {len(texts)} completed"
                     )
-                    self._safe_cache()
+                    self._save_cache()
             embeddings.append([embedding])
             if len(embeddings) % 1000 == 0:
                 print(
                     f"INFO: Embedding retrieval/calculation - {len(embeddings)} of {len(texts)} completed"
                 )
-                self._safe_cache()
+                self._save_cache()
         return numpy.concatenate(embeddings)
