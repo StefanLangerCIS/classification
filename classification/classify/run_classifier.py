@@ -140,7 +140,7 @@ def classification_result_to_text(report: ClassificationResultData, file_path: s
         f.write(f"Parameters: {json.dumps(report.classifier_info)}\n")
         f.write(f"Label: {report.class_label}\n")
         f.write(f"Text labels: {', '.join(report.text_labels)}\n")
-        f.write(f"Dense: {report.is_dense}\n")
+        f.write(f"Embedding: {report.preprocessing_info.get('name', 'unknown')}\n")
         f.write("\n#Counts:\n")
         f.write(f"Number of training data_records: {report.n_training}\n")
         f.write(f"Number of classified data_records: {report.n_predicted_classes}\n")
@@ -294,7 +294,8 @@ def run_classifier(
         classification_report_table=classification_report_table,
     )
 
-    outfile_identifier = f"results_{classifier.name()}_{class_label}_{datetime.now().strftime('%m_%d_%Y_%H_%M_%S')}"
+    embedding_name = classifier_encoder.name()
+    outfile_identifier = f"results_{classifier.name()}_{embedding_name}_{class_label}_{datetime.now().strftime('%m_%d_%Y_%H_%M_%S')}"
     outfile_name = os.path.join(output_folder, f"{outfile_identifier}.txt")
     classification_result_to_text(classification_result, outfile_name)
 

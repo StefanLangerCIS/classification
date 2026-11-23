@@ -39,6 +39,7 @@ def main() -> None:
                     "classifier": classifier_result.classifier_name,
                     "class_label": classifier_result.class_label,
                     "text_labels": ", ".join(classifier_result.text_labels),
+                    "embedding": classifier_result.preprocessing_info.get("name", "unknown"),
                     "preprocessing": json.dumps(classifier_result.preprocessing_info),
                     "accuracy": classifier_result.classification_report["accuracy"]
                 })
