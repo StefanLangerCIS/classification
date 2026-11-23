@@ -30,7 +30,7 @@ def plot_and_store_confusion_matrix(
         y_true: list,
         y_pred: list,
         file_name: str,
-        normalize=True,
+        normalize: bool=True,
         cmap=plt.cm.Blues,
         show=False,
 ) -> None:
@@ -118,6 +118,7 @@ class ClassificationResultData(BaseModel):
     n_predicted_classes: int
     preprocessing_info: Dict[str, Any]
     classification_report: Dict
+    classification_report_table: str
 
 
 def classification_result_to_text(report: ClassificationResultData, file_path) -> None:
@@ -146,7 +147,7 @@ def classification_result_to_text(report: ClassificationResultData, file_path) -
             "ignore", category=sklearn.exceptions.UndefinedMetricWarning
         )
 
-        f.write(f"\n#Classification report:\n{report.classification_report}\n")
+        f.write(f"\n#Classification report:\n{report.classification_report_table}\n")
 
 
 def classification_result_to_json(report: ClassificationResultData, file_path) -> None:
@@ -154,13 +155,25 @@ def classification_result_to_json(report: ClassificationResultData, file_path) -
     with open(file_path, "w", encoding="utf-8") as f:
         json.dump(result_dict, f, ensure_ascii=False, indent=2)
 
+class ClassificationConfiguration(BaseModel):
+        classifier_type: str
+        training_data_file: str
+        input_file: str
+        class_label: str
+        text_labels: list[str]
+        dense: bool
+        lsa: bool
+        min_df: int = 1
+        max_df: float = 1.0
+
+
 
 def run_classifier(
         classifier_type: str,
         training_data_file: str,
         input_file: str,
         class_label: str,
-        text_labels: List[str],
+        text_labels: list[str],
         dense: bool,
         lsa: bool,
         output_folder: str,
@@ -233,7 +246,12 @@ def run_classifier(
     classification_time = int(time.time() - classification_time)
     app_logger.info(f"Classification completed in {classification_time} seconds")
 
-    classification_report = sklearn.metrics.classification_report(expected_classes, predicted_classes, output_dict=True)
+    classification_report_table = sklearn.metrics.classification_report(expected_classes,
+                                                                        predicted_classes,
+                                                                        digits=4)
+    classification_report = sklearn.metrics.classification_report(expected_classes,
+                                                                  predicted_classes,
+                                                                  output_dict=True)
     classification_result = ClassificationResultData(
         classifier_name=classifier.name(),
         classifier_info=classifier.info(),
@@ -248,6 +266,7 @@ def run_classifier(
         n_predicted_classes=len(set(predicted_classes)),
         preprocessing_info=classifier_encoder.info(),
         classification_report=classification_report,
+        classification_report_table=classification_report_table,
     )
 
     outfile_identifier = f"results_{classifier.name()}_{class_label}_{datetime.now().strftime('%m_%d_%Y_%H_%M_%S')}"
@@ -306,6 +325,12 @@ def main():
     )
 
     parser.add_argument(
+        "--lsa",
+        action="store_true",
+        help="Use matrix reduction with latent semantic indexing/analysis",
+    )
+
+    parser.add_argument(
         "--text_label",
         default="body",
         help="Label/field in the json data which contains the text to classify."
@@ -347,6 +372,7 @@ def main():
             args.label,
             text_labels,
             args.dense,
+            args.lsa,
             args.output,
             args.max_train,
             args.verbose,

@@ -72,7 +72,7 @@ class SklearnClassifier(TextClassifier):
         elif classifier_type == "MultinomialNB":
             self.sklearn_classifier = MultinomialNB(alpha=0.01)
         elif classifier_type == "LogisticRegression":
-            self.sklearn_classifier = LogisticRegression(solver="sag", n_jobs=6)
+            self.sklearn_classifier = LogisticRegression(n_jobs=-1)
         elif classifier_type == "RandomForestClassifier":
             self.sklearn_classifier = RandomForestClassifier(n_estimators=100, n_jobs=-1)
         elif classifier_type == "DecisionTreeClassifier":

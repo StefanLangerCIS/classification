@@ -144,42 +144,7 @@ class TransformerClassifier(TextClassifier):
         # else:
         #    pass
 
-    def _print_decision_tree(self):
-        """
-        Print decision tree rules
-        :return:
-        """
-        rules_text = export_text(self.sklearn_classifier, max_depth=100)
-        # Vocabulary for replacement in the data which contains
-        # feature numbers only
-        if isinstance(self.preprocessor, TextEncoderSparse):
-            vocab = self.preprocessor.count_vectorizer.vocabulary_
-        else:
-            app_logger.warning("Cannot print decision tree.")
-            return
-        vocabulary = dict((feature, word) for word, feature in vocab.items())
-        rules = rules_text.split("\n")
-        lines = []
-        for rule in rules:
-            if "feature_" in rule:
-                word_id_str = re.sub(".*feature_([0-9]+).*", r"\1", rule)
-                word_id = int(word_id_str)
-                if word_id in vocabulary:
-                    word = vocabulary[word_id]
-                else:
-                    word = "UNK"
-                rule = rule.replace(f"feature_{word_id_str}", word)
-                lines.append(rule)
-            else:
-                lines.append(rule)
-
-        with open(
-                os.path.join(self.model_folder_path, "decision_rules.txt"),
-                "w",
-                encoding="utf-8",
-        ) as out:
-            for line in lines:
-                out.write(line + "\n")
+    
 
 """
 from datasets import Dataset

@@ -36,13 +36,13 @@ class TextEncoderSparse(TextEncoder):
         self.lsa = lsa
         # Features for sparse and LSA variants
         # The minimum number of document a word has to occur in to be considered
-        self.min_df = 3
+        self.min_df = 4
         # The maximum fraction of documents a word might occur in to be considered
         self.max_df = 0.8
         # Minimum length of word sequence for sparse matrix
         self.words_ngram_min = 1
         # Maximum length of word sequence for sparse matrix
-        self.words_ngram_max = 3
+        self.words_ngram_max = 1
 
         self.count_vectorizer = None
         self.tfidf_transformer = None
@@ -98,7 +98,7 @@ class TextEncoderSparse(TextEncoder):
             self.tfidf_transformer = TfidfTransformer(use_idf=True).fit(
                 matrix_train_counts
             )
-        app_logger.info("TF-IDF matrix training completed")
+        app_logger.info(f"TF-IDF matrix training completed. Dimensions: {self.tfidf_transformer.n_features_in_}")
         if self.lsa:
             app_logger.info("Reducing matrix with LSA")
             matrix_train = self.tfidf_transformer.transform(matrix_train_counts)
